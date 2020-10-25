@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ImageModal from '../../components/ImageModal/ImageModal';
 import ImagesGrid from '../../components/ImagesGrid/ImagesGrid';
 import Popup from '../../components/Popup/Popup';
+import { throttle } from './utils';
 
 class ImageGallery extends Component {
   state = {
@@ -9,6 +10,20 @@ class ImageGallery extends Component {
     selectedImage: null,
     isImageInFullScreen: false,
     popupData: null
+  };
+
+  fullScreenRef = React.createRef();
+
+  samplePopupData = {
+    artist: 'Layer Change',
+    artistProfilePhotoUrl:
+      'https://res.cloudinary.com/asynchronous-art-inc/image/upload/v1580411554/users/anonymous_atliv6',
+    imageUrl:
+      'https://res.cloudinary.com/asynchronous-art-inc/image/upload/art/CIVIT/QmNjxnGDTo1H3BusePsNq9vYe83k53C7mJKDXRJnVLE87J.jpg',
+    imageTitle: 'Dark sky by Vladimir',
+    layer: 'Participant 6',
+    triggeredBy: 'MOCA',
+    blockheight: '#10201800'
   };
 
   handleImageClick = image => {
@@ -23,14 +38,13 @@ class ImageGallery extends Component {
     if (document.fullscreenElement) {
       document.exitFullscreen();
       this.setState({ isImageInFullScreen: false });
-      return;
+    } else {
+      e.target.closest('.fullscreen-container').requestFullscreen();
+      this.setState({ isImageInFullScreen: true });
     }
-
-    e.target.closest('.image-modal-backdrop').requestFullscreen();
-    this.setState({ isImageInFullScreen: true });
   };
 
-  handleModalNavBtnClick = (direction, currentImageId) => {
+  handleModalNavBtnClick = throttle((direction, currentImageId) => {
     const indexOfCurrentImage = this.state.images.findIndex(
       image => image.tokenId === currentImageId
     );
@@ -42,34 +56,22 @@ class ImageGallery extends Component {
     if (selectedImage === undefined) return;
 
     this.setState({ selectedImage });
-  };
+  }, 100);
 
   handleKeyDown = e => {
     const { selectedImage } = this.state;
 
     if (e.keyCode === 32) {
+      // Space key to show modal from the bottom left corner
       e.preventDefault();
       // Optional data fetching for popup can be performed here...
-      const popupData = {
-        artist: 'Layer Change',
-        artistProfilePhotoUrl:
-          'https://res.cloudinary.com/asynchronous-art-inc/image/upload/v1580411554/users/anonymous_atliv6',
-        imageUrl:
-          'https://res.cloudinary.com/asynchronous-art-inc/image/upload/art/CIVIT/QmNjxnGDTo1H3BusePsNq9vYe83k53C7mJKDXRJnVLE87J.jpg',
-        imageTitle: 'Dark sky by Vladimir',
-        layer: 'Participant 6',
-        triggeredBy: 'MOCA',
-        blockheight: '#10201800'
-      };
-
-      this.setState({ popupData });
-    }
-
-    if (selectedImage === null) return;
-
-    if (e.keyCode === 37) {
+      this.setState({ popupData: this.samplePopupData });
+    } else if (e.keyCode === 27 && selectedImage) {
+      // ESC key to close the image modal
+      this.setState({ selectedImage: null });
+    } else if (e.keyCode === 37 && selectedImage !== null) {
       this.handleModalNavBtnClick('left', selectedImage.tokenId);
-    } else if (e.keyCode === 39) {
+    } else if (e.keyCode === 39 && selectedImage !== null) {
       this.handleModalNavBtnClick('right', selectedImage.tokenId);
     }
   };
@@ -83,17 +85,19 @@ class ImageGallery extends Component {
 
     return (
       <section>
-        {this.state.selectedImage ? (
-          <ImageModal
-            image={this.state.selectedImage}
-            isImageInFullScreen={this.state.isImageInFullScreen}
-            onModalCloseBtnClick={this.handleModalCloseBtnClick}
-            onModalViewBtnClick={this.handleModalViewChange}
-            onModalNavBtnClick={this.handleModalNavBtnClick}
-          />
-        ) : null}
+        <div ref={this.fullScreenRef} className="fullscreen-container">
+          {this.state.selectedImage ? (
+            <ImageModal
+              image={this.state.selectedImage}
+              isImageInFullScreen={this.state.isImageInFullScreen}
+              onModalCloseBtnClick={this.handleModalCloseBtnClick}
+              onModalViewBtnClick={this.handleModalViewChange}
+              onModalNavBtnClick={this.handleModalNavBtnClick}
+            />
+          ) : null}
 
-        {this.state.popupData ? <Popup data={this.state.popupData} /> : null}
+          {this.state.popupData ? <Popup data={this.state.popupData} /> : null}
+        </div>
 
         <ImagesGrid
           images={this.state.images}
@@ -113,7 +117,15 @@ class ImageGallery extends Component {
     parsedResponse.arts[parsedResponse.arts.length - 1].isLastImage = true;
 
     this.setState({ images: parsedResponse.arts });
+
+    // Image Modal keyboard navigation
     document.body.addEventListener('keydown', this.handleKeyDown);
+    // Sync state if the user exits fullscreen by pressing Esc key
+    this.fullScreenRef.current.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement) {
+        this.setState({ isImageInFullScreen: false });
+      }
+    });
   }
 }
 

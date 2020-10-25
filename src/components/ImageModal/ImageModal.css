@@ -1,5 +1,5 @@
-.modal-btn-left,
-.modal-btn-right {
+.image-modal .modal-btn-left,
+.image-modal .modal-btn-right {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -9,10 +9,18 @@
   outline: none;
 }
 
-.modal-btn-left {
+.image-modal .modal-btn-left {
   left: 7%;
 }
 
-.modal-btn-right {
+.image-modal .modal-btn-right {
   right: 7%;
+}
+
+.image-modal .btn-modal-svgicon:hover {
+  fill: black;
+}
+
+.image-modal .toolbar button:hover {
+  transform: scale(1.15);
 }

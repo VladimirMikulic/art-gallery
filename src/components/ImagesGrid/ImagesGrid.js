@@ -1,7 +1,7 @@
 import React from 'react';
 import './ImagesGrid.css';
 
-const ImageGrid = ({ images, onImageClick }) => {
+const ImagesGrid = ({ images, onImageClick }) => {
   return (
     <div className="container mx-auto my-16">
       <div className="image-grid">
@@ -25,4 +25,4 @@ const ImageGrid = ({ images, onImageClick }) => {
   );
 };
 
-export default ImageGrid;
+export default ImagesGrid;

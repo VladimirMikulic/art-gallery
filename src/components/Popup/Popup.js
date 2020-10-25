@@ -12,7 +12,7 @@ const Popup = ({ data }) => {
   return (
     <article
       ref={popupRef}
-      className="fixed left-0 bottom-0 ml-8 mb-8 p-6 pr-12 pb-12 rounded-xl text-white popup"
+      className="fixed left-0 bottom-0 ml-8 mb-8 p-6 pr-12 pb-12 z-20 rounded-xl text-white popup"
     >
       <p className="flex items-center">
         <img

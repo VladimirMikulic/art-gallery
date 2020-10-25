@@ -1,5 +1,6 @@
 import React from 'react';
 import './ImageModal.css';
+import { fullscreenSvgIcon, fitToWidthSvgIcon, closeSvgIcon } from './icons';
 
 const ImageModal = ({
   image,
@@ -20,25 +21,12 @@ const ImageModal = ({
           </button>
         )}
 
-        <div className="flex justify-end pb-8 px-10 mr-24">
-          <button
-            className="text-2xl text-gray-600 mt-1"
-            onClick={onModalViewBtnClick}
-          >
-            {isImageInFullScreen ? (
-              <img
-                src="https://img.icons8.com/windows/30/ffffff/normal-screen.png"
-                alt="Fullscreen icon"
-              />
-            ) : (
-              <img
-                src="https://img.icons8.com/windows/30/ffffff/fit-to-width.png"
-                alt="Fit-to-width icon"
-              />
-            )}
+        <div className="toolbar flex justify-end pb-8 px-10 mr-24">
+          <button onClick={onModalViewBtnClick}>
+            {isImageInFullScreen ? fitToWidthSvgIcon : fullscreenSvgIcon}
           </button>
           <button className="pl-4 text-5xl" onClick={onModalCloseBtnClick}>
-            ×
+            {closeSvgIcon}
           </button>
         </div>
 
