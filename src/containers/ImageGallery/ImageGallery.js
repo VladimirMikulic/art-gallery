@@ -69,6 +69,9 @@ class ImageGallery extends Component {
     } else if (e.keyCode === 27 && selectedImage) {
       // ESC key to close the image modal
       this.setState({ selectedImage: null });
+    } else if (e.keyCode === 27 && this.state.popupData) {
+      // ESC key to close the popup
+      this.setState({ popupData: null });
     } else if (e.keyCode === 37 && selectedImage !== null) {
       this.handleModalNavBtnClick('left', selectedImage.tokenId);
     } else if (e.keyCode === 39 && selectedImage !== null) {
@@ -109,7 +112,10 @@ class ImageGallery extends Component {
 
   async componentDidMount() {
     const response = await fetch(
-      'https://async-2-staging.appspot.com/users/cloud-strife/arts?rel=artist&type=masters&page=1&count=100&sortBy=reservePrice&sortDirection=-1'
+      'https://async-2-staging.appspot.com/users/cloud-strife/arts?rel=artist&type=masters&page=1&count=100&sortBy=reservePrice&sortDirection=-1',
+      {
+        mode: 'cors'
+      }
     );
     const parsedResponse = await response.json();
 

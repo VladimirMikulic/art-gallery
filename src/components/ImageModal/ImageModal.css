@@ -17,10 +17,22 @@
   right: 7%;
 }
 
-.image-modal .btn-modal-svgicon:hover {
-  fill: black;
+.image-modal .toolbar {
+  position: absolute;
+  right: 7%;
+  top: 7%;
 }
 
 .image-modal .toolbar button:hover {
   transform: scale(1.15);
+}
+
+.image-modal .modal-image {
+  max-height: 72vh;
+}
+
+@media all and (display-mode: fullscreen) {
+  .image-modal .modal-image {
+    max-height: 77vh;
+  }
 }

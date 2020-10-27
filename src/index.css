@@ -12,7 +12,8 @@ code {
     monospace;
 }
 
-a,
+a:focus,
+svg:focus,
 button:focus {
   outline: none;
 }
