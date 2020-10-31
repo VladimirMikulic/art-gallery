@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
+import Popup from '../../components/Popup/Popup';
+import Spinner from '../../components/Spinner/Spinner';
+import Navigation from '../../components/Navigation/Navigation';
 import ImageModal from '../../components/ImageModal/ImageModal';
 import ImagesGrid from '../../components/ImagesGrid/ImagesGrid';
-import Popup from '../../components/Popup/Popup';
-import { throttle } from './utils';
+
+import { throttle, samplePopupData } from '../../utils';
 
 class ImageGallery extends Component {
   state = {
@@ -14,17 +17,30 @@ class ImageGallery extends Component {
 
   fullScreenRef = React.createRef();
 
-  samplePopupData = {
-    artist: 'Layer Change',
-    artistProfilePhotoUrl:
-      'https://res.cloudinary.com/asynchronous-art-inc/image/upload/v1580411554/users/anonymous_atliv6',
-    imageUrl:
-      'https://res.cloudinary.com/asynchronous-art-inc/image/upload/art/CIVIT/QmNjxnGDTo1H3BusePsNq9vYe83k53C7mJKDXRJnVLE87J.jpg',
-    imageTitle: 'Dark sky by Vladimir',
-    layer: 'Participant 6',
-    triggeredBy: 'MOCA',
-    blockheight: '#10201800'
-  };
+  async fetchArtImages(username) {
+    // Default behaviour for this demo
+    const usernameSlug = username ? username : 'bevanbarton';
+    const response = await fetch(
+      `https://async-2-staging.appspot.com/users/${usernameSlug}/arts?rel=artist&type=masters&page=1&count=100&sortBy=reservePrice&sortDirection=-1`,
+      {
+        mode: 'cors'
+      }
+    );
+    console.clear(); // Prevent Chrome "spamming" console with 404 request notices
+
+    if (!response.ok) return null;
+    const parsedResponse = await response.json();
+
+    if (parsedResponse.arts.length > 0) {
+      parsedResponse.arts[0].isFirstImage = true;
+      parsedResponse.arts[parsedResponse.arts.length - 1].isLastImage = true;
+    }
+
+    const artImages =
+      parsedResponse.arts.length > 0 ? parsedResponse.arts : null;
+
+    return artImages;
+  }
 
   handleImageClick = image => {
     this.setState({ selectedImage: image });
@@ -58,14 +74,21 @@ class ImageGallery extends Component {
     this.setState({ selectedImage });
   }, 100);
 
+  handleSearchSubmit = async query => {
+    this.setState({ images: [] }, async () => {
+      const artImages = await this.fetchArtImages(query);
+      this.props.history.push(`/user/${query}`);
+      this.setState({ images: artImages });
+    });
+  };
+
   handleKeyDown = e => {
     const { selectedImage } = this.state;
 
     if (e.keyCode === 32) {
       // Space key to show modal from the bottom left corner
       e.preventDefault();
-      // Optional data fetching for popup can be performed here...
-      this.setState({ popupData: this.samplePopupData });
+      this.setState({ popupData: samplePopupData });
     } else if (e.keyCode === 27 && selectedImage) {
       // ESC key to close the image modal
       this.setState({ selectedImage: null });
@@ -79,16 +102,39 @@ class ImageGallery extends Component {
     }
   };
 
-  render() {
+  getImagesContent() {
+    if (this.state.images === null) {
+      return (
+        <div className="mx-auto text-xl text-center mt-32">
+          No images found for user {this.props.match.params.username}!
+        </div>
+      );
+    }
+
     if (this.state.images.length === 0) {
       return (
-        <div className="mx-auto text-xl text-center mt-16">Loading...</div>
+        <div className="mx-auto text-xl text-center mt-18">
+          <Spinner width="3rem" height="3rem" />
+        </div>
       );
     }
 
     return (
-      <section>
-        <div ref={this.fullScreenRef} className="fullscreen-container">
+      <ImagesGrid
+        images={this.state.images}
+        onImageClick={this.handleImageClick}
+      />
+    );
+  }
+
+  render() {
+    return (
+      <>
+        <header className="App-header">
+          <Navigation onSearchSubmit={this.handleSearchSubmit} />
+        </header>
+
+        <section ref={this.fullScreenRef} className="fullscreen-container">
           {this.state.selectedImage ? (
             <ImageModal
               image={this.state.selectedImage}
@@ -100,34 +146,22 @@ class ImageGallery extends Component {
           ) : null}
 
           {this.state.popupData ? <Popup data={this.state.popupData} /> : null}
-        </div>
+        </section>
 
-        <ImagesGrid
-          images={this.state.images}
-          onImageClick={this.handleImageClick}
-        />
-      </section>
+        {this.getImagesContent()}
+      </>
     );
   }
 
   async componentDidMount() {
-    const response = await fetch(
-      'https://async-2-staging.appspot.com/users/cloud-strife/arts?rel=artist&type=masters&page=1&count=100&sortBy=reservePrice&sortDirection=-1',
-      {
-        mode: 'cors'
-      }
-    );
-    const parsedResponse = await response.json();
-
-    parsedResponse.arts[0].isFirstImage = true;
-    parsedResponse.arts[parsedResponse.arts.length - 1].isLastImage = true;
-
-    this.setState({ images: parsedResponse.arts });
+    const { username } = this.props.match.params;
+    const artImages = await this.fetchArtImages(username);
+    this.setState({ images: artImages });
 
     // Image Modal keyboard navigation
     document.body.addEventListener('keydown', this.handleKeyDown);
     // Sync state if the user exits fullscreen by pressing Esc key
-    this.fullScreenRef.current.addEventListener('fullscreenchange', () => {
+    this.fullScreenRef.current?.addEventListener('fullscreenchange', () => {
       if (!document.fullscreenElement) {
         this.setState({ isImageInFullScreen: false });
       }

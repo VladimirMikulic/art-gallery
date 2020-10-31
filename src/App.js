@@ -1,15 +1,14 @@
-import Navigation from './components/Navigation/Navigation';
+import { Route } from 'react-router-dom';
 import ImageGallery from './containers/ImageGallery/ImageGallery';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <Navigation />
-      </header>
-      <main>
-        <ImageGallery />
-      </main>
+      <Route
+        path={['/', '/user/:username']}
+        exact
+        component={ImageGallery}
+      ></Route>
     </div>
   );
 }

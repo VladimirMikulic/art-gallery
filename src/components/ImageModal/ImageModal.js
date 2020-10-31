@@ -1,6 +1,10 @@
 import React from 'react';
 import './ImageModal.css';
-import { fullscreenSvgIcon, fitToWidthSvgIcon, closeSvgIcon } from './icons';
+
+import { ReactComponent as CloseIcon } from '../../icons/close.svg';
+import { ReactComponent as FullscreenIcon } from '../../icons/fullscreen.svg';
+import { ReactComponent as FitToWidthIcon } from '../../icons/fit-to-width.svg';
+
 import Spinner from '../Spinner/Spinner';
 
 const ImageModal = ({
@@ -26,10 +30,14 @@ const ImageModal = ({
 
         <div className="toolbar flex justify-end pb-8 px-1">
           <button onClick={onModalViewBtnClick}>
-            {isImageInFullScreen ? fitToWidthSvgIcon : fullscreenSvgIcon}
+            {isImageInFullScreen ? (
+              <FitToWidthIcon />
+            ) : (
+              <FullscreenIcon className="btn-modal-svgicon" />
+            )}
           </button>
           <button className="pl-4 text-5xl" onClick={onModalCloseBtnClick}>
-            {closeSvgIcon}
+            <CloseIcon />
           </button>
         </div>
 

@@ -29,6 +29,7 @@
 
 .image-modal .modal-image {
   max-height: 72vh;
+  max-width: 70vw;
 }
 
 @media all and (display-mode: fullscreen) {
