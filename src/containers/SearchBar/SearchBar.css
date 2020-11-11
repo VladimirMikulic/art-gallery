@@ -51,3 +51,9 @@ input::-webkit-search-cancel-button {
   transform: translateY(-50%);
   border-radius: 50%;
 }
+
+@media (max-width: 570px) {
+  .search-input[type='search'].active {
+    width: 10rem;
+  }
+}

@@ -3,7 +3,7 @@ import ImageGallery from './containers/ImageGallery/ImageGallery';
 
 function App() {
   return (
-    <div className="App">
+    <div className="App p-4 sm:p-8">
       <Route
         path={['/', '/user/:username']}
         exact
