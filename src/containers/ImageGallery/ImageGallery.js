@@ -5,7 +5,7 @@ import Navigation from '../../components/Navigation/Navigation';
 import ImageModal from '../../components/ImageModal/ImageModal';
 import ImagesGrid from '../../components/ImagesGrid/ImagesGrid';
 
-import { throttle, samplePopupData } from '../../utils';
+import { throttle, samplePopupData, sampleArtists } from '../../utils';
 
 class ImageGallery extends Component {
   state = {
@@ -17,11 +17,9 @@ class ImageGallery extends Component {
 
   fullScreenRef = React.createRef();
 
-  async fetchArtImages(username) {
-    // Default behaviour for this demo
-    const usernameSlug = username ? username : 'bevanbarton';
+  async fetchArtImagesOfArtist(username) {
     const response = await fetch(
-      `https://async-2-staging.appspot.com/users/${usernameSlug}/arts?rel=artist&type=masters&page=1&count=100&sortBy=reservePrice&sortDirection=-1`,
+      `https://async-2-staging.appspot.com/users/${username}/arts?rel=artist&type=masters&page=1&count=100&sortBy=reservePrice&sortDirection=-1`,
       {
         mode: 'cors'
       }
@@ -31,16 +29,33 @@ class ImageGallery extends Component {
     if (!response.ok) return null;
     const parsedResponse = await response.json();
 
-    if (parsedResponse.arts.length > 0) {
-      parsedResponse.arts[0].isFirstImage = true;
-      parsedResponse.arts[parsedResponse.arts.length - 1].isLastImage = true;
-    }
-
     const artImages =
       parsedResponse.arts.length > 0 ? parsedResponse.arts : null;
 
     return artImages;
   }
+
+  fetchAllArtImages = (() => {
+    let cachedArtImages = null;
+
+    return async () => {
+      if (cachedArtImages) return cachedArtImages;
+
+      const images = [];
+
+      for (const artist of sampleArtists) {
+        const artistImages = await this.fetchArtImagesOfArtist(artist);
+        images.push(...artistImages);
+      }
+
+      images[0].isFirstImage = true;
+      images[images.length - 1].isLastImage = true;
+
+      if (!cachedArtImages) cachedArtImages = images;
+
+      return images;
+    };
+  })();
 
   handleImageClick = image => {
     this.setState({ selectedImage: image });
@@ -74,10 +89,10 @@ class ImageGallery extends Component {
     this.setState({ selectedImage });
   }, 100);
 
-  handleSearchSubmit = async query => {
+  handleSearchSubmit = async username => {
     this.setState({ images: [] }, async () => {
-      const artImages = await this.fetchArtImages(query);
-      this.props.history.push(`/user/${query}`);
+      const artImages = await this.fetchArtImagesOfArtist(username);
+      this.props.history.push(`/search/${username}`);
       this.setState({ images: artImages });
     });
   };
@@ -155,7 +170,10 @@ class ImageGallery extends Component {
 
   async componentDidMount() {
     const { username } = this.props.match.params;
-    const artImages = await this.fetchArtImages(username);
+
+    if (!username) var artImages = await this.fetchAllArtImages();
+    else var artImages = await this.fetchArtImagesOfArtist(username);
+
     this.setState({ images: artImages });
 
     // Image Modal keyboard navigation
@@ -166,6 +184,17 @@ class ImageGallery extends Component {
         this.setState({ isImageInFullScreen: false });
       }
     });
+  }
+
+  async componentDidUpdate() {
+    const isHomepage = this.props.location.pathname === '/';
+
+    if (isHomepage && this.state.images === null) {
+      this.setState({ images: [] }, async () => {
+        const artImages = await this.fetchAllArtImages();
+        this.setState({ images: artImages });
+      });
+    }
   }
 }
 

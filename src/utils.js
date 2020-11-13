@@ -24,3 +24,17 @@ export const samplePopupData = {
   triggeredBy: 'MOCA',
   blockheight: '#10201800'
 };
+
+export const sampleArtists = [
+  'loving-raphael-300',
+  'bevbevbevbev',
+  'punctilious-van-eyck-9772',
+  'voluble-segall-8751',
+  'machiavellian-rembrandt-9984',
+  'rare-designer',
+  'petulant-degas-8099',
+  'esurient-johns-4923',
+  'reticent-stella-648',
+  'playful-kandinsky-fu2m',
+  'rubenesque-hockney-5635'
+];

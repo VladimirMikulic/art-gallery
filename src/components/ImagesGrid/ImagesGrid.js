@@ -27,7 +27,7 @@ const ImagesGrid = ({ images, onImageClick }) => {
       >
         {images.map(image => {
           return (
-            <figure
+            <article
               className="images-grid-item cursor-pointer rounded-lg"
               key={image.tokenId}
               onClick={() => onImageClick(image)}
@@ -38,7 +38,16 @@ const ImagesGrid = ({ images, onImageClick }) => {
                 alt={image.title}
                 onLoad={handleImageLoad}
               />
-            </figure>
+
+              <div className="text-left mt-3">
+                <p className="font-bold text-lg text-gray-800">
+                  {image.title}
+                </p>
+                <p className="inline-block text-sm text-gray-700 hover:underline">
+                  by {image.owner.name || 'Unknown'}
+                </p>
+              </div>
+            </article>
           );
         })}
       </div>

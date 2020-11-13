@@ -5,7 +5,7 @@ function App() {
   return (
     <div className="App p-4 sm:p-8">
       <Route
-        path={['/', '/user/:username']}
+        path={['/', '/search/:username']}
         exact
         component={ImageGallery}
       ></Route>
