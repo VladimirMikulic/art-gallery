@@ -8,10 +8,12 @@
   display: inline-block;
   padding: 1rem;
   margin: 0 1rem 1rem 0;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.images-grid .images-grid-item img {
   transition: all 0.2s ease-in-out;
 }
 
-.images-grid .images-grid-item:hover {
+.images-grid .images-grid-item:hover img {
   transform: scale(1.02);
 }

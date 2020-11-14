@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Popup from '../../components/Popup/Popup';
 import Spinner from '../../components/Spinner/Spinner';
-import Navigation from '../../components/Navigation/Navigation';
 import ImageModal from '../../components/ImageModal/ImageModal';
 import ImagesGrid from '../../components/ImagesGrid/ImagesGrid';
 
@@ -35,27 +34,40 @@ class ImageGallery extends Component {
     return artImages;
   }
 
-  fetchAllArtImages = (() => {
-    let cachedArtImages = null;
+  async fetchAllArtImages() {
+    const requests = sampleArtists.map(artist =>
+      this.fetchArtImagesOfArtist(artist)
+    );
+    // Executes multiple requests in parallel
+    const responses = await Promise.all(requests);
+    const images = responses.reduce((acc, res) => [...acc, ...res], []);
 
-    return async () => {
-      if (cachedArtImages) return cachedArtImages;
+    images[0].isFirstImage = true;
+    images[images.length - 1].isLastImage = true;
 
-      const images = [];
+    return images;
+  }
 
-      for (const artist of sampleArtists) {
-        const artistImages = await this.fetchArtImagesOfArtist(artist);
-        images.push(...artistImages);
-      }
+  async getArtImages() {
+    if (this.props.images) {
+      const artImages = this.props.images.map(img => ({ ...img }));
+      artImages[0].isFirstImage = true;
+      artImages[artImages.length - 1].isLastImage = true;
+      return artImages;
+    }
 
-      images[0].isFirstImage = true;
-      images[images.length - 1].isLastImage = true;
+    const { username } = this.props.match.params;
+    let artImages = JSON.parse(localStorage.getItem(window.location.pathname));
 
-      if (!cachedArtImages) cachedArtImages = images;
+    if (artImages) return artImages;
 
-      return images;
-    };
-  })();
+    if (!username) artImages = await this.fetchAllArtImages();
+    else artImages = await this.fetchArtImagesOfArtist(username);
+
+    localStorage.setItem(window.location.pathname, JSON.stringify(artImages));
+
+    return artImages;
+  }
 
   handleImageClick = image => {
     this.setState({ selectedImage: image });
@@ -87,15 +99,7 @@ class ImageGallery extends Component {
     if (selectedImage === undefined) return;
 
     this.setState({ selectedImage });
-  }, 100);
-
-  handleSearchSubmit = async username => {
-    this.setState({ images: [] }, async () => {
-      const artImages = await this.fetchArtImagesOfArtist(username);
-      this.props.history.push(`/search/${username}`);
-      this.setState({ images: artImages });
-    });
-  };
+  }, 150);
 
   handleKeyDown = e => {
     const { selectedImage } = this.state;
@@ -120,9 +124,9 @@ class ImageGallery extends Component {
   getImagesContent() {
     if (this.state.images === null) {
       return (
-        <div className="mx-auto text-xl text-center mt-32">
+        <p className="mx-auto text-xl text-center mt-32">
           No images found for user {this.props.match.params.username}!
-        </div>
+        </p>
       );
     }
 
@@ -145,10 +149,6 @@ class ImageGallery extends Component {
   render() {
     return (
       <>
-        <header className="App-header">
-          <Navigation onSearchSubmit={this.handleSearchSubmit} />
-        </header>
-
         <section ref={this.fullScreenRef} className="fullscreen-container">
           {this.state.selectedImage ? (
             <ImageModal
@@ -169,11 +169,7 @@ class ImageGallery extends Component {
   }
 
   async componentDidMount() {
-    const { username } = this.props.match.params;
-
-    if (!username) var artImages = await this.fetchAllArtImages();
-    else var artImages = await this.fetchArtImagesOfArtist(username);
-
+    const artImages = await this.getArtImages();
     this.setState({ images: artImages });
 
     // Image Modal keyboard navigation
@@ -185,17 +181,6 @@ class ImageGallery extends Component {
       }
     });
   }
-
-  async componentDidUpdate() {
-    const isHomepage = this.props.location.pathname === '/';
-
-    if (isHomepage && this.state.images === null) {
-      this.setState({ images: [] }, async () => {
-        const artImages = await this.fetchAllArtImages();
-        this.setState({ images: artImages });
-      });
-    }
-  }
 }
 
-export default ImageGallery;
+export default React.memo(ImageGallery);

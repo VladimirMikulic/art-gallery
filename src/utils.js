@@ -16,7 +16,7 @@ export const throttle = (func, delay) => {
 export const samplePopupData = {
   artist: 'Layer Change',
   artistProfilePhotoUrl:
-    'https://res.cloudinary.com/asynchronous-art-inc/image/upload/v1580411554/users/anonymous_atliv6',
+    'https://res.cloudinary.com/asynchronous-art-inc/image/upload/w_300,h_300,c_thumb,q_70,f_auto/v1580411554/users/anonymous_atliv6',
   imageUrl:
     'https://res.cloudinary.com/asynchronous-art-inc/image/upload/art/CIVIT/QmNjxnGDTo1H3BusePsNq9vYe83k53C7mJKDXRJnVLE87J.jpg',
   imageTitle: 'Dark sky by Vladimir',
@@ -26,7 +26,6 @@ export const samplePopupData = {
 };
 
 export const sampleArtists = [
-  'loving-raphael-300',
   'bevbevbevbev',
   'punctilious-van-eyck-9772',
   'voluble-segall-8751',

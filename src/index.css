@@ -5,6 +5,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Prevents website "flickering" */
+  min-height: 101vh;
 }
 
 code {
@@ -16,4 +18,8 @@ a:focus,
 svg:focus,
 button:focus {
   outline: none;
+}
+
+.h-fit-content {
+  height: fit-content;
 }

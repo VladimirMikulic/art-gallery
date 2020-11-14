@@ -23,7 +23,15 @@
   top: 7%;
 }
 
-.image-modal .toolbar button:hover {
+.image-modal button,
+.modal-btn-left svg,
+.modal-btn-right svg {
+  transition: all 0.2s;
+}
+
+.image-modal .toolbar button:hover,
+.modal-btn-left svg:hover,
+.modal-btn-right svg:hover {
   transform: scale(1.15);
 }
 

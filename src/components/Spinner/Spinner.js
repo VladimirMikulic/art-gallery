@@ -1,7 +1,7 @@
 import React from 'react';
 import './Spinner.css';
 
-const Spinner = ({ width, height }) => {
+const Spinner = ({ width = '3rem', height = '3rem' }) => {
   return (
     <div className="spinner" style={{ width, height }}>
       <div className="double-bounce1"></div>

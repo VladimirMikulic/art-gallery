@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import './SearchBar.css';
 import { ReactComponent as SearchIcon } from '../../icons/search.svg';
 import { throttle } from '../../utils';
@@ -15,7 +16,7 @@ class SearchBar extends Component {
     const query = this.state.query.trim();
 
     if (query !== '') {
-      return this.props.onSearchSubmit(query);
+      return this.props.history.push(`/search/${query}`);
     }
 
     this.searchInputRef.current.focus();
@@ -48,7 +49,6 @@ class SearchBar extends Component {
           ref={this.searchInputRef}
           className={searchInputClasses}
           type="search"
-          placeholder="Search"
           autoFocus={this.state.showSearchBar}
           onChange={this.handleChange}
           onKeyDown={this.handleKeyDown}
@@ -65,4 +65,4 @@ class SearchBar extends Component {
   }
 }
 
-export default SearchBar;
+export default withRouter(SearchBar);

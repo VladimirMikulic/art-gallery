@@ -33,7 +33,7 @@ input::-webkit-search-cancel-button {
 }
 
 .search-input[type='search'].active {
-  width: 20rem;
+  width: 18rem;
   color: #000;
   cursor: auto;
   background-color: #fff;

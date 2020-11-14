@@ -4,6 +4,8 @@ import './ImageModal.css';
 import { ReactComponent as CloseIcon } from '../../icons/close.svg';
 import { ReactComponent as FullscreenIcon } from '../../icons/fullscreen.svg';
 import { ReactComponent as FitToWidthIcon } from '../../icons/fit-to-width.svg';
+import { ReactComponent as BackIcon } from '../../icons/back.svg';
+import { ReactComponent as ForwardIcon } from '../../icons/forward.svg';
 
 import Spinner from '../Spinner/Spinner';
 
@@ -24,7 +26,7 @@ const ImageModal = ({
             className="modal-btn-left"
             onClick={() => onModalNavBtnClick('left', image.tokenId)}
           >
-            ‹
+            <BackIcon />
           </button>
         )}
 
@@ -60,7 +62,7 @@ const ImageModal = ({
             className="modal-btn-right"
             onClick={() => onModalNavBtnClick('right', image.tokenId)}
           >
-            ›
+            <ForwardIcon />
           </button>
         )}
       </div>
