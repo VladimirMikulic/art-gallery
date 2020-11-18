@@ -49,6 +49,7 @@ class SearchBar extends Component {
           ref={this.searchInputRef}
           className={searchInputClasses}
           type="search"
+          aria-label="Search"
           autoFocus={this.state.showSearchBar}
           onChange={this.handleChange}
           onKeyDown={this.handleKeyDown}

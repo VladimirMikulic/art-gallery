@@ -18,6 +18,11 @@ const ImageModal = ({
 }) => {
   const [isImageLoading, setImageLoading] = React.useState(true);
 
+  // Set loader on each new image passed to the modal (props change)
+  React.useEffect(() => {
+    setImageLoading(true);
+  }, [image]);
+
   return (
     <div className="image-modal-backdrop fixed w-screen h-screen bg-gray-900 z-10 top-0 left-0 text-white select-none">
       <div className="image-modal mx-auto flex flex-col justify-center h-full relative">

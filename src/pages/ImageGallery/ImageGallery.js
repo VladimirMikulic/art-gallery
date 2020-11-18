@@ -99,7 +99,7 @@ class ImageGallery extends Component {
     if (selectedImage === undefined) return;
 
     this.setState({ selectedImage });
-  }, 150);
+  }, 50);
 
   handleKeyDown = e => {
     const { selectedImage } = this.state;
