@@ -2,6 +2,7 @@ import React from 'react';
 import Spinner from '../Spinner/Spinner';
 import { Link } from 'react-router-dom';
 import './ImagesGrid.css';
+import { usernameToName } from '../../utils';
 
 const ImagesGrid = ({ images, onImageClick }) => {
   const [imagesLoaded, setImagesLoaded] = React.useState(false);
@@ -41,9 +42,11 @@ const ImagesGrid = ({ images, onImageClick }) => {
 
               <div className="text-left mt-3">
                 <p className="font-bold text-lg text-gray-800">{image.title}</p>
-                <Link to={`/artist/${image.owner.username}`}>
+                <Link to={`/artist/${image.artists[0].username}`}>
                   <p className="inline-block text-sm text-gray-700 hover:underline">
-                    by {image.owner.name || 'Unknown'}
+                    by&nbsp;
+                    {image.artists[0].name ||
+                      usernameToName(image.artists[0].username)}
                   </p>
                 </Link>
               </div>

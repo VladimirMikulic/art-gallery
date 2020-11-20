@@ -13,6 +13,9 @@ export const throttle = (func, delay) => {
   };
 };
 
+export const usernameToName = username =>
+  username.split('-').slice(0, 2).join(' ');
+
 export const samplePopupData = {
   artist: 'Layer Change',
   artistProfilePhotoUrl:

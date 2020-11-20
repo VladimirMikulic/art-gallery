@@ -70,7 +70,10 @@ class ImageGallery extends Component {
   }
 
   handleImageClick = image => {
-    this.setState({ selectedImage: image });
+    const imageIndex = this.state.images.indexOf(image);
+    this.setState({ selectedImage: image }, () => {
+      setTimeout(() => this.cacheImages(imageIndex), 2000);
+    });
   };
 
   handleModalCloseBtnClick = () => {
@@ -98,8 +101,33 @@ class ImageGallery extends Component {
 
     if (selectedImage === undefined) return;
 
-    this.setState({ selectedImage });
+    this.setState({ selectedImage }, () => {
+      setTimeout(() => this.cacheImages(indexOfCurrentImage), 2000);
+    });
   }, 50);
+
+  // Caches the next/previous 2 images while the user
+  // is in modal view for better UX
+  cacheImages = imageIndex => {
+    const imagesToPreload = this.state.images.slice(
+      imageIndex - 2,
+      imageIndex + 3
+    );
+
+    imagesToPreload.forEach((image, index) => {
+      const delay = (index + 1) * 150;
+      setTimeout(() => {
+        // Prevents objects from being garbage collected
+        if (!window.cachedImages) {
+          window.cachedImages = {};
+        }
+
+        const img = new Image();
+        img.src = `https://res.cloudinary.com/asynchronous-art-inc/image/upload/${image.imagePath}`;
+        window.cachedImages[image.tokenId] = img;
+      }, delay);
+    });
+  };
 
   handleKeyDown = e => {
     const { selectedImage } = this.state;

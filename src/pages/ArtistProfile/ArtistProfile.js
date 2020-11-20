@@ -1,6 +1,7 @@
 import React from 'react';
 import Spinner from '../../components/Spinner/Spinner';
 import ImageGallery from '../ImageGallery/ImageGallery';
+import { usernameToName } from '../../utils';
 
 const ArtistProfile = props => {
   const [artistData, setArtistData] = React.useState();
@@ -34,16 +35,18 @@ const ArtistProfile = props => {
     );
   }
 
+  const name = artistData.user.name || usernameToName(artistData.user.username);
+
   return (
     <section className="lg:flex justify-between">
       <article className="bg-gradient-to-r from-red-400 to-orange-300 h-fit-content p-8 mb-16 rounded-lg text-white text-center lg:w-4/12 lg:mr-12 xl:w-3/12">
         <img
           className="rounded-full w-32 h-32 mx-auto"
           src={`https://res.cloudinary.com/asynchronous-art-inc/image/upload/${artistData.user.userProfilePhotoPath}`}
-          alt={`${artistData.user.name} profile icon`}
+          alt={`${name} profile icon`}
         />
         <p className="font-bold text-3xl mt-4">
-          {artistData.user.name || 'Unknown'}
+          {name}
         </p>
         <p className="mb-4 mt-1">
           Lorem, ipsum dolor sit amet consectetur adipisicing.
