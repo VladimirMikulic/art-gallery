@@ -80,6 +80,12 @@ class ImageGallery extends Component {
     this.setState({ selectedImage: null });
   };
 
+  handleFullScreenChange = () => {
+    if (!document.fullscreenElement) {
+      this.setState({ isImageInFullScreen: false });
+    }
+  };
+
   handleModalViewChange = e => {
     if (document.fullscreenElement) {
       document.exitFullscreen();
@@ -203,11 +209,18 @@ class ImageGallery extends Component {
     // Image Modal keyboard navigation
     document.body.addEventListener('keydown', this.handleKeyDown);
     // Sync state if the user exits fullscreen by pressing Esc key
-    this.fullScreenRef.current?.addEventListener('fullscreenchange', () => {
-      if (!document.fullscreenElement) {
-        this.setState({ isImageInFullScreen: false });
-      }
-    });
+    this.fullScreenRef.current?.addEventListener(
+      'fullscreenchange',
+      this.handleFullScreenChange
+    );
+  }
+
+  componentWillUnmount() {
+    document.body.removeEventListener('keydown', this.handleKeyDown);
+    this.fullScreenRef.current.removeEventListener(
+      'fullscreenchange',
+      this.handleFullScreenChange
+    );
   }
 }
 
